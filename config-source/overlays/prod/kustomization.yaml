@@ -22,13 +22,13 @@ patches:
     - op: replace
       path: /metadata/namespace
       value: foo-prod
-# Pod creators - give all FooCorp developers access 
+# Pod creators - only give CD pod creation access
 - target:
     kind: RoleBinding
     name: pod-creators
   patch: |-
     - op: replace
       path: /subjects/0/name
-      value: developers-all@foo-corp.com
+      value: deploy-bot@foo-corp.com
 commonLabels:
   environment: prod

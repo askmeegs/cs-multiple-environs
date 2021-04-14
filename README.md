@@ -29,6 +29,8 @@ You'll set up the following:
 ```
 export DEV_PROJECT=""
 export PROD_PROJECT=""
+export DEV_CLUSTER_ZONE=""
+export PROD_CLUSTER_ZONE=""
 export GITHUB_USERNAME=""
 export GITHUB_TOKEN=""
 export GITHUB_EMAIL=""
@@ -63,38 +65,48 @@ export GITHUB_EMAIL=""
 
 7. **From the Cloud Build dashboard, create a Trigger** from the `foo-config-source` repo with the following fields: 
 
-- Trigger name: Foo-Config-Hydration
-- Event: push to a new branch
-- Repository: foo-config-source
-- Branch: ^main$
-- Type: Autodetected (cloudbuild.yaml)
+- **Trigger name**: Foo-Config-Hydration
+- **Event**: push to a new branch
+- **Repository**: foo-config-source
+- **Branch**: `^main$`
+- **Type**: Autodetected (`cloudbuild.yaml`)
 
 
 Click **Create**. 
 
-8. Because we already pushed to the foo-config-source repo before creating this trigger, **let's run it manually to trigger the hydration of the dev and prod repos**. In the triggers list, in the `Foo-Config-Hydration` row, click **Run** on the right side of the screen. The build should run successfully, writing the output of `kustomize build` to the `foo-config-dev` and `foo-config-prod` repos, respectively. 
+8. Because we already pushed to the foo-config-source repo before creating this trigger, **let's run it manually to trigger the hydration of the dev and prod repos**. In the triggers list, in the `Foo-Config-Hydration` row, click **Run** on the right side of the screen and use the default branch value, `main`. The build should run successfully, writing the output of `kustomize build` to the `foo-config-dev` and `foo-config-prod` repos, respectively. 
 
 ![](screenshots/build-success.png)
 
 9. **Once the build completes, open one of the dev or prod repos.** You should see YAML files populating the repo, and a README update indicating the commit SHA of the `foo-config-source` repo that this repo was last built from. 
 
-
 ![screenshot](screenshots/git-output.png)
 
+10. **Install ConfigSync** on both clusters. 
 
-10. **Run `nomos status`.** You should see that both your dev and prod clusters are now `synced` to their respective repos. 
+```
+./5-install-config-sync.sh
+```
+
+11. **Run `nomos status`.** You should see that both your dev and prod clusters are now `synced` to their respective repos. 
 
 ```
 dev
   --------------------
   <root>   https:/github.com/askmeegs/foo-config-dev@main
-  SYNCED   191bde92
+  SYNCED   f111be7d
+
+*prod
+  --------------------
+  <root>   https:/github.com/askmeegs/foo-config-prod@main
+  SYNCED   f15cddf1
 ```
 
-11. **Switch to the `dev` cluster.** Get namespaces to verify that the resources are synced - you should see a `foo` and `bar`  namespace appear. 
+12. **Switch to the `dev` cluster.** Get namespaces to verify that the resources are synced - you should see a `foo` and `bar`  namespace appear. 
 
 
 ```
+kubectx dev
 kubectl get namespace 
 ```
 
@@ -102,14 +114,12 @@ Expected output:
 
 ```
 NAME                           STATUS   AGE
-bar                            Active   10m
-config-management-monitoring   Active   44m
-config-management-system       Active   10m
-default                        Active   114m
-foo                            Active   10m
-gke-connect                    Active   109m
-kube-node-lease                Active   114m
-kube-public                    Active   114m
-kube-system                    Active   114m
-resource-group-system          Active   18m
+config-management-monitoring   Active   86m
+config-management-system       Active   86m
+default                        Active   102m
+foo-dev                        Active   9m42s
+gke-connect                    Active   98m
+kube-node-lease                Active   102m
+kube-public                    Active   102m
+kube-system                    Active   102m
 ```

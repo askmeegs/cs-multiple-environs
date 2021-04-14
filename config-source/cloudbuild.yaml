@@ -3,11 +3,11 @@ steps:
   id: Hydrate foo-config-dev 
   entrypoint: 'bash'
   args:
-   - '-eEuo'
-   - 'pipefail'
-   - '-c'
-   - |-
-    git clone https://github.com/$$GITHUB_USERNAME/foo-config-dev
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    git clone https://github.com/$$GITHUB_USERNAME/foo-config-dev && \
     cd foo-config-dev 
     git config user.email $$GITHUB_EMAIL
     git config user.name $$GITHUB_USERNAME 
@@ -30,10 +30,10 @@ steps:
   id: Hydrate foo-config-prod
   entrypoint: 'bash'
   args:
-   - '-eEuo'
-   - 'pipefail'
-   - '-c'
-   - |-
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
     git clone https://github.com/$$GITHUB_USERNAME/foo-config-prod
     cd foo-config-prod
     git config user.email $$GITHUB_EMAIL
@@ -47,7 +47,6 @@ steps:
     rm README.md 
     echo "Hydration update: ${SHORT_SHA}" > README.md
 
-    
     git add . && \
     git commit -m "Hydrated: ${SHORT_SHA}
     Built from commit ${COMMIT_SHA} of repository foo-config-source - main branch 

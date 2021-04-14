@@ -44,6 +44,7 @@ gcloud container hub memberships register dev \
     --gke-uri=${URI} \
     --service-account-key-file=dev-key.json
 
+gcloud config set project $DEV_PROJECT
 gcloud alpha container hub config-management enable
 
 echo "🏁 Setting up project: ${PROD_PROJECT}"
@@ -66,6 +67,7 @@ gcloud container hub memberships register prod \
     --gke-uri=${URI} \
     --service-account-key-file=prod-key.json
 
+gcloud config set project $PROD_PROJECT
 gcloud alpha container hub config-management enable
 
 echo "⭐️ Done registering clusters."

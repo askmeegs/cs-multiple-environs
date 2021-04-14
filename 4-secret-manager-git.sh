@@ -23,17 +23,13 @@ gcloud config set project $PROD_PROJECT
 
 echo "🔐 Creating secret manager secrets in prod project..."
 gcloud secrets create github-username --replication-policy="automatic"
-echo -n $GITHUB_USERNAME | \
-    gcloud secrets versions add github-username --data-file=-
+printf $GITHUB_USERNAME | gcloud secrets versions add github-username --data-file=-
 
 gcloud secrets create github-email --replication-policy="automatic"
-echo -n $GITHUB_EMAIL | \
-    gcloud secrets versions add github-email --data-file=-
+printf $GITHUB_EMAIL | gcloud secrets versions add github-email --data-file=-
 
 gcloud secrets create github-token --replication-policy="automatic"
-echo -n $GITHUB_TOKEN | \
-    gcloud secrets versions add github-token --data-file=-
-
+printf $GITHUB_TOKEN | gcloud secrets versions add github-token --data-file=-
 
 echo "✅ Granting Cloud Build secret manager access..."
 PROJECT_NUMBER=`gcloud projects list --filter="$PROD_PROJECT" --format="value(PROJECT_NUMBER)"`

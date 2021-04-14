@@ -1,3 +1,4 @@
 *key.json
 config-management-operator.yaml
 env
+.DS_Store
