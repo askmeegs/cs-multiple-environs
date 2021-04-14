@@ -1,5 +1,5 @@
 steps: 
-- name: 'gcr.io/cloud-builders/gcloud'
+- name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
   id: Hydrate foo-config-dev 
   entrypoint: 'bash'
   args:
@@ -14,16 +14,19 @@ steps:
     git remote set-url origin https://$$GITHUB_USERNAME:$$GITHUB_TOKEN@github.com/$$GITHUB_USERNAME/foo-config-dev.git
     cd ..
 
-    kustomize build overlays/dev foo-config-dev/
+    kustomize build overlays/dev --output foo-config-dev/
     cd foo-config-dev 
 
+    rm README.md 
+    echo "Hydration update: ${SHORT_SHA}" > README.md
+
     git add . && \
-    git commit -m "Updated image tag: ${SHORT_SHA}
+    git commit -m "Hydrated: ${SHORT_SHA}
     Built from commit ${COMMIT_SHA} of repository foo-config-source - main branch 
     Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
     git push origin main
   secretEnv: ['GITHUB_EMAIL', 'GITHUB_USERNAME', 'GITHUB_TOKEN']
-- name: 'gcr.io/cloud-builders/gcloud'
+- name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
   id: Hydrate foo-config-prod
   entrypoint: 'bash'
   args:
@@ -35,14 +38,18 @@ steps:
     cd foo-config-prod
     git config user.email $$GITHUB_EMAIL
     git config user.name $$GITHUB_USERNAME 
-    git remote set-url origin https://$$GITHUB_USERNAME:$$GITHUB_TOKEN@github.com/$$GITHUB_USERNAME/foo-config-dev.git
+    git remote set-url origin https://$$GITHUB_USERNAME:$$GITHUB_TOKEN@github.com/$$GITHUB_USERNAME/foo-config-prod.git
     cd ..
 
-    kustomize build overlays/prod foo-config-prod/
+    kustomize build overlays/prod --output foo-config-prod/
     cd foo-config-prod 
+
+    rm README.md 
+    echo "Hydration update: ${SHORT_SHA}" > README.md
+
     
     git add . && \
-    git commit -m "Updated image tag: ${SHORT_SHA}
+    git commit -m "Hydrated: ${SHORT_SHA}
     Built from commit ${COMMIT_SHA} of repository foo-config-source - main branch 
     Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
     git push origin main

@@ -4,7 +4,6 @@ kind: ConfigManagement
 metadata:
   name: config-management
 spec:
-  enableLegacyFields: true
   clusterName: dev
   git:
     syncRepo: https://github.com/askmeegs/foo-config-dev/

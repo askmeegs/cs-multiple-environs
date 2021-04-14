@@ -1,6 +1,34 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-- pod-creator-rolebinding.yaml
-- bar-serviceaccount.yaml
-- foo-serviceaccount.yaml
+bases:
+- ../../base
+patches:
+# Namespace - make name unique per environ 
+- target:
+    kind: Namespace
+    name: foo
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: foo-prod
+# ServiceAccount - make name unique per environ 
+- target:
+    kind: ServiceAccount
+    name: foo-ksa
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: foo-ksa-prod
+    - op: replace
+      path: /metadata/namespace
+      value: foo-prod
+# Pod creators - give all FooCorp developers access 
+- target:
+    kind: RoleBinding
+    name: pod-creators
+  patch: |-
+    - op: replace
+      path: /subjects/0/name
+      value: developers-all@foo-corp.com
+commonLabels:
+  environment: prod
