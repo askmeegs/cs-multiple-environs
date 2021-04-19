@@ -3,14 +3,6 @@ kind: Kustomization
 bases:
 - ../../base
 patches:
-# Namespace - make name unique per environ 
-- target:
-    kind: Namespace
-    name: foo
-  patch: |-
-    - op: replace
-      path: /metadata/name
-      value: foo-dev
 # ServiceAccount - make name unique per environ 
 - target:
     kind: ServiceAccount

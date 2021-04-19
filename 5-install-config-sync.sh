@@ -13,17 +13,25 @@ if [[ -z "$PROD_PROJECT" ]]; then
 fi
 
 
-echo "Downloading the ConfigSync operator..."
-gsutil cp gs://config-management-release/released/latest/config-management-operator.yaml config-management-operator.yaml
+# echo "Downloading the ConfigSync operator..."
+# gsutil cp gs://config-management-release/released/latest/config-management-operator.yaml config-management-operator.yaml
 
 echo "🔁 Installing ConfigSync on the dev cluster..."
 gcloud config set project $DEV_PROJECT
 kubectx dev 
-kubectl apply -f config-management-operator.yaml 
-kubectl apply -f install-config/config-management-dev.yaml
+gcloud alpha container hub config-management apply \
+    --membership=dev \
+    --config="install-config/config-management-dev.yaml" \
+    --project=${DEV_PROJECT}
+# kubectl apply -f config-management-operator.yaml 
+# kubectl apply -f install-config/config-management-dev.yaml
 
 echo "🔁 Installing ConfigSync on the prod cluster..."
 gcloud config set project $PROD_PROJECT
 kubectx prod 
-kubectl apply -f config-management-operator.yaml 
-kubectl apply -f install-config/config-management-prod.yaml
+# kubectl apply -f config-management-operator.yaml 
+# kubectl apply -f install-config/config-management-prod.yaml
+gcloud alpha container hub config-management apply \
+    --membership=prod \
+    --config="install-config/config-management-prod.yaml" \
+    --project=${PROD_PROJECT}
