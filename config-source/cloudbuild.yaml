@@ -1,6 +1,6 @@
 steps: 
 - name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
-  id: Hydrate foo-config-dev 
+  id: Render foo-config-dev 
   entrypoint: 'bash'
   args:
   - '-eEuo'
@@ -18,16 +18,16 @@ steps:
     cd foo-config-dev 
 
     rm README.md 
-    echo "Hydration update: ${SHORT_SHA}" > README.md
+    echo "Update: ${SHORT_SHA}" > README.md
 
     git add . && \
-    git commit -m "Hydrated: ${SHORT_SHA}
+    git commit -m "Rendered: ${SHORT_SHA}
     Built from commit ${COMMIT_SHA} of repository foo-config-source - main branch 
     Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
     git push origin main
   secretEnv: ['GITHUB_EMAIL', 'GITHUB_USERNAME', 'GITHUB_TOKEN']
 - name: 'gcr.io/google-samples/cloudbuild-kustomize:latest'
-  id: Hydrate foo-config-prod
+  id: Render foo-config-prod
   entrypoint: 'bash'
   args:
   - '-eEuo'
@@ -45,10 +45,10 @@ steps:
     cd foo-config-prod 
 
     rm README.md 
-    echo "Hydration update: ${SHORT_SHA}" > README.md
+    echo "Update: ${SHORT_SHA}" > README.md
 
     git add . && \
-    git commit -m "Hydrated: ${SHORT_SHA}
+    git commit -m "Rendered: ${SHORT_SHA}
     Built from commit ${COMMIT_SHA} of repository foo-config-source - main branch 
     Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
     git push origin main

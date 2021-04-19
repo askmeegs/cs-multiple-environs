@@ -5,7 +5,7 @@ kind: ConfigManagement
 metadata:
   name: config-management
 spec:
-  clusterName: prod
+  # clusterName: prod
   git:
     syncRepo: https://github.com/askmeegs/foo-config-prod/
     syncBranch: main
